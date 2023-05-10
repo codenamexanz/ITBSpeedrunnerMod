@@ -1,4 +1,4 @@
-# ITB-Speedrunner-Mod
+# ITBSpeedrunnerMod
 Speedrunner mod for Inside the Backrooms. Moves lobby moth jelly and spawnpoints to ladder.
 
 ## Setup:
