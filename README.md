@@ -1,5 +1,5 @@
 # ITBSpeedrunnerMod
-Speedrunner mod for Inside the Backrooms. Moves lobby moth jelly and spawnpoints to ladder.
+Speedrunner Mod for Inside the Backrooms. Moves lobby moth jelly and spawnpoints to ladder,  FOR WHEN PRACTICE MOD ALLOWED: also detects bad VHS/Hands spawns.
 
 ## Setup:
 
@@ -13,6 +13,7 @@ Speedrunner mod for Inside the Backrooms. Moves lobby moth jelly and spawnpoints
 
 ### ITBSpeedrunnerMod Install Steps
   - Download the mod https://github.com/codenamexanz/ITBSpeedrunnerMod/raw/main/SpeedrunnerMod.dll
+  - FOR WHEN PRACTICE MOD ALLOWED: https://github.com/codenamexanz/ITBSpeedrunnerMod/raw/main/SpeedrunnerMod+PracticeMod.dll
   - Add the dll into the Mods folder generated within the Inside the Backrooms folder
 
 
@@ -20,10 +21,10 @@ Speedrunner mod for Inside the Backrooms. Moves lobby moth jelly and spawnpoints
 
 ## How to Use
   - When starting a game from Lobby, you will spawn in front of the ladder with moth jelly there!
+  - FOR WHEN PRACTICE MOD ALLOWED: Above the list of mods, there is a toggle for activating the VHS/Hands detector, white = ON!
 
 ## Questions/Issues
 If you have any questions or issues feel free to contact @Xanz on discord
-
 
 
 ## Details of things you're installing
