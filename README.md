@@ -13,7 +13,7 @@ Speedrunner Mod for Inside the Backrooms. Moves lobby moth jelly and spawnpoints
 
 ### ITBSpeedrunnerMod Install Steps
   - Download the mod https://github.com/codenamexanz/ITBSpeedrunnerMod/raw/main/SpeedrunnerMod.dll
-  - FOR WHEN PRACTICE MOD ALLOWED: https://github.com/codenamexanz/ITBSpeedrunnerMod/raw/main/SpeedrunnerMod+PracticeMod.dll
+  - FOR WHEN PRACTICE MOD ALLOWED: https://github.com/codenamexanz/ITBSpeedrunnerMod/raw/main/SpeedrunnerMod%2BPracticeMod.dll
   - Add the dll into the Mods folder generated within the Inside the Backrooms folder
 
 
