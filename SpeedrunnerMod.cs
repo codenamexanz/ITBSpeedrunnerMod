@@ -9,7 +9,7 @@ using System.Reflection;
 namespace SpeedrunnerMod
 {
     /*
-     * SpeedrunnerMod - Moves lobby moth jelly and spawnpoints to ladder, and detects bad vhs/hands spawns
+     * SpeedrunnerMod - Moves lobby moth jelly and spawnpoints to ladder, and detects bad VHS/hands spawns
      */
     public class SpeedrunnerMod : MelonMod
     {

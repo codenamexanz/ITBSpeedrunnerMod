@@ -1,5 +1,5 @@
 # ITBSpeedrunnerMod
-Speedrunner Mod for Inside the Backrooms. Moves lobby moth jelly and spawnpoints to ladder,  FOR WHEN PRACTICE MOD ALLOWED: also detects bad VHS/Hands spawns.
+Speedrunner Mod for Inside the Backrooms. Moves lobby moth jelly and spawnpoints to ladder, also combined with the practice mod to detect normally bad VHS/Clock hands spawns.
 
 ## Setup:
 
@@ -13,7 +13,6 @@ Speedrunner Mod for Inside the Backrooms. Moves lobby moth jelly and spawnpoints
 
 ### ITBSpeedrunnerMod Install Steps
   - Download the mod https://github.com/codenamexanz/ITBSpeedrunnerMod/raw/main/SpeedrunnerMod.dll
-  - FOR WHEN PRACTICE MOD ALLOWED: https://github.com/codenamexanz/ITBSpeedrunnerMod/raw/main/SpeedrunnerMod%2BPracticeMod.dll
   - Add the dll into the Mods folder generated within the Inside the Backrooms folder
 
 
@@ -21,10 +20,10 @@ Speedrunner Mod for Inside the Backrooms. Moves lobby moth jelly and spawnpoints
 
 ## How to Use
   - When starting a game from Lobby, you will spawn in front of the ladder with moth jelly there!
-  - FOR WHEN PRACTICE MOD ALLOWED: Above the list of mods, there is a toggle for activating the VHS/Hands detector, white = ON!
+  - Above the list of mods, there is a toggle for activating the VHS/Hands detector, white = ON!
 
 ## Questions/Issues
-If you have any questions or issues feel free to contact @Xanz on discord
+If you have any questions or issues feel free to contact Xanz on discord
 
 
 ## Details of things you're installing
@@ -34,4 +33,4 @@ Microsoft .NET Desktop Runtime is a runtime library, made by Microsoft that is n
 
 Gained a lot of insight from @Mr. Monocle's ITBLiveSplitMod, huge props! Link: https://github.com/bandademan/ITBLiveSplitMod
 
-ITBSpeedrunnerMod is an open source MelonLoader mod developed by @Xanz - Link: https://github.com/codenamexanz/ITBSpeedrunnerMod
+ITBSpeedrunnerMod is an open source MelonLoader mod developed by Xanz - Link: https://github.com/codenamexanz/ITBSpeedrunnerMod
