@@ -6,17 +6,35 @@ using Il2Cpp;
 using HarmonyLib;
 using System.Reflection;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
+using System.Xml;
 
 namespace SpeedrunnerMod
 {
     /*
-     * SpeedrunnerMod - Moves lobby moth jelly and spawnpoints to ladder, and detects bad VHS/hands spawns
+     * SpeedrunnerMod - Moves lobby moth jelly and spawnpoints to ladder, detects bad VHS/Hands spawns, gets rid of deafening exit noise, adds keybinds to start runs
      */
     public class SpeedrunnerMod : MelonMod
     {
         private string listOfMods = "Active Mods \n";
+
+        #region changingKeyBools
+        private static bool changingExitKey = false;
+        private static bool changingSingleKey = false;
+        private static bool changingMultiKey = false;
+        private static bool keyChanged = false;
+        #endregion
+
+        #region MelonPreferences
         private MelonPreferences_Category category;
         private MelonPreferences_Entry<bool> detectorBool;
+        private MelonPreferences_Entry<Key> exitKey;
+        private MelonPreferences_Entry<Key> singlePlayerStartKey;
+        private MelonPreferences_Entry<Key> multiPlayerStartKey;
+        private MelonPreferences_Entry<int> levelStarting;
+        private MelonPreferences_Entry<int> difficultyStart;
+        private MelonPreferences_Entry<int> multiPeople;
+        #endregion
 
         public override void OnInitializeMelon()
         {
@@ -24,8 +42,18 @@ namespace SpeedrunnerMod
             {
                 listOfMods = listOfMods + mod.Info.Name + " by " + mod.Info.Author + "\n";
             }
+            
+            #region initCategory
             category = MelonPreferences.CreateCategory("Speedrunner Mod");
             detectorBool = category.CreateEntry<bool>("detectorBool", true);
+            exitKey = category.CreateEntry<Key>("exitKey", Key.Delete);
+            singlePlayerStartKey = category.CreateEntry<Key>("singlePlayerStartKey", Key.Insert);
+            multiPlayerStartKey = category.CreateEntry<Key>("multiPlayerStartKey", Key.Home);
+            levelStarting = category.CreateEntry<int>("startingLevel", 0);
+            difficultyStart = category.CreateEntry<int>("difficultyStart", 0);
+            multiPeople = category.CreateEntry<int>("multiplayerPlayers", 0);
+            #endregion
+
             MelonLogger.Msg(System.ConsoleColor.Green, "detectorBool value is " + detectorBool.Value);
         }
         private void DrawRegisteredMods()
@@ -75,26 +103,331 @@ namespace SpeedrunnerMod
             }
         }
 
-        public void CreateDetectorButton()
+        public void CreateButtons()
         {
-            GUIStyle buttonStyle = new GUIStyle(GUI.skin.button);
+            #region buttonStyles
+            GUIStyle detectorButton;
+            GUIStyle whiteButtonStyle = new GUIStyle(GUI.skin.button);
+            GUIStyle normalButtonStyle = new GUIStyle(GUI.skin.button);
 
-            if (detectorBool.Value)
+            whiteButtonStyle.normal.background = Texture2D.whiteTexture;
+            whiteButtonStyle.normal.textColor = Color.black;
+
+            normalButtonStyle.normal.background = GUI.skin.button.normal.background;
+            normalButtonStyle.normal.textColor = GUI.skin.button.normal.textColor;
+            #endregion
+
+            #region keyButtonTexts
+            String exitButtonText;
+            if (changingExitKey)
             {
-                buttonStyle.normal.background = Texture2D.whiteTexture;
-                buttonStyle.normal.textColor = Color.black;
+                exitButtonText = "Press new Key:";
             }
             else
             {
-                buttonStyle.normal.background = GUI.skin.button.normal.background;
-                buttonStyle.normal.textColor = GUI.skin.button.normal.textColor;
+                exitButtonText = "Exit Key: " + exitKey.Value.ToString();
             }
 
-            if (GUI.Button(new Rect(Screen.width - 155f, 80f, 150f, 20f), "VHS/Hands Detector", buttonStyle))
+            String singleButtonText;
+            if (changingSingleKey)
+            {
+                singleButtonText = "Press new Key:";
+            }
+            else
+            {
+                singleButtonText = "Singleplayer Key: " + singlePlayerStartKey.Value.ToString();
+            }
+
+            String multiButtonText;
+            if (changingMultiKey)
+            {
+                multiButtonText = "Press new Key:";
+            }
+            else
+            {
+                multiButtonText = "Multiplayer Key: " + multiPlayerStartKey.Value.ToString();
+            }
+            #endregion
+
+            #region detectorButton
+            if (detectorBool.Value)
+            {
+                detectorButton = whiteButtonStyle;
+            }
+            else
+            {
+                detectorButton = normalButtonStyle;
+            }
+            
+
+            if (GUI.Button(new Rect(Screen.width - 330f, 5f, 165f, 20f), "VHS/Hands Detector", detectorButton))
             {
                 detectorBool.Value = !detectorBool.Value;
                 MelonLogger.Msg(System.ConsoleColor.Green, "Detector bool changed to " + detectorBool.Value);
             }
+            #endregion
+
+            #region keyButtons
+            if (GUI.Button(new Rect(Screen.width - 330f, 30f, 165f, 20f), exitButtonText))
+            {
+                if (!changingExitKey)
+                {
+                    changingExitKey = true;
+                }
+            }
+
+            if (GUI.Button(new Rect(Screen.width - 330f, 55f, 165f, 20f), singleButtonText))
+            {
+                if (!changingSingleKey)
+                {
+                    changingSingleKey = true;
+                }
+            }
+
+            if (GUI.Button(new Rect(Screen.width - 330f, 80f, 165f, 20f), multiButtonText))
+            {
+                if (!changingMultiKey)
+                {
+                    changingMultiKey = true;
+                }
+            }
+            #endregion
+
+            #region levelStartButtons
+            if (GUI.Button(new Rect(Screen.width - 330f, 105f, 52f, 20f), "Lobby", levelStarting.Value == 0 ? whiteButtonStyle : normalButtonStyle))
+            {
+                levelStarting.Value = 0;
+            }
+
+            if (GUI.Button(new Rect(Screen.width - 273f, 105f, 52f, 20f), "None", levelStarting.Value == 1 ? whiteButtonStyle : normalButtonStyle))
+            {
+                levelStarting.Value = 1;
+            }
+
+            if (GUI.Button(new Rect(Screen.width - 217f, 105f, 52f, 20f), "Hotel", levelStarting.Value == 2 ? whiteButtonStyle : normalButtonStyle))
+            {
+                levelStarting.Value = 2;
+            }
+            #endregion
+
+            #region difficultyStartButtons
+            if (GUI.Button(new Rect(Screen.width - 330f, 130f, 52f, 20f), "Easy", difficultyStart.Value == 0 ? whiteButtonStyle : normalButtonStyle))
+            {
+                difficultyStart.Value = 0;
+            }
+
+            if (GUI.Button(new Rect(Screen.width - 273f, 130f, 52f, 20f), "Norm", difficultyStart.Value == 1 ? whiteButtonStyle : normalButtonStyle))
+            {
+                difficultyStart.Value = 1;
+            }
+
+            if (GUI.Button(new Rect(Screen.width - 217f, 130f, 52f, 20f), "Hard", difficultyStart.Value == 2 ? whiteButtonStyle : normalButtonStyle))
+            {
+                difficultyStart.Value = 2;
+            }
+            #endregion
+
+            #region multiPlayerPeopleButtons
+            if (GUI.Button(new Rect(Screen.width - 330f, 155f, 52f, 20f), "2p", multiPeople.Value == 0 ? whiteButtonStyle : normalButtonStyle))
+            {
+                multiPeople.Value = 0;
+            }
+
+            if (GUI.Button(new Rect(Screen.width - 273f, 155f, 52f, 20f), "3p", multiPeople.Value == 1 ? whiteButtonStyle : normalButtonStyle))
+            {
+                multiPeople.Value = 1;
+            }
+
+            if (GUI.Button(new Rect(Screen.width - 217f, 155f, 52f, 20f), "4p", multiPeople.Value == 2 ? whiteButtonStyle : normalButtonStyle))
+            {
+                multiPeople.Value = 2;
+            }
+            #endregion
+        }
+
+        public override void OnUpdate()
+        {
+            #region exitKeyChange
+            if (changingExitKey)
+            {
+                if (Keyboard.current.anyKey.wasPressedThisFrame)
+                {
+                    foreach (Key key in Enum.GetValues(typeof(Key)))
+                    {
+                        if (key.ToString() != "None" && key.ToString() != exitKey.Value.ToString())
+                        {
+                            if (Keyboard.current[key].wasPressedThisFrame)
+                            {
+                                changingExitKey = false;
+                                exitKey.Value = key;
+                                keyChanged = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            #endregion
+
+            #region singleKeyChange
+            if (changingSingleKey)
+            {
+                if (Keyboard.current.anyKey.wasPressedThisFrame)
+                {
+                    foreach (Key key in Enum.GetValues(typeof(Key)))
+                    {
+                        if (key.ToString() != "None" && key.ToString() != singlePlayerStartKey.Value.ToString())
+                        {
+                            if (Keyboard.current[key].wasPressedThisFrame)
+                            {
+                                changingSingleKey = false;
+                                singlePlayerStartKey.Value = key;
+                                keyChanged = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            #endregion
+
+            #region multiKeyChange
+            if (changingMultiKey)
+            {
+                if (Keyboard.current.anyKey.wasPressedThisFrame)
+                {
+                    foreach (Key key in Enum.GetValues(typeof(Key)))
+                    {
+                        if (key.ToString() != "None" && key.ToString() != multiPlayerStartKey.Value.ToString())
+                        {
+                            if (Keyboard.current[key].wasPressedThisFrame)
+                            {
+                                changingMultiKey = false;
+                                multiPlayerStartKey.Value = key;
+                                keyChanged = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            #endregion
+
+            #region exitKeyPress
+            GameObject canvasExitSearch = null;
+            if (Keyboard.current[exitKey.Value].wasPressedThisFrame)
+            {
+                if (!keyChanged)
+                {
+                    GameObject canvas = GameObject.Find("ChatUI").transform.parent.gameObject;
+                    if (canvas != null)
+                    {
+                        for (int i = 0; i < canvas.transform.childCount; i++)
+                        {
+                            canvasExitSearch = canvas.transform.GetChild(i).gameObject;
+                            if (canvasExitSearch.name == "PauseMenu")
+                            {
+                                canvasExitSearch.SetActive(true);
+                                break;
+                            }
+                        }
+                        if (canvasExitSearch != null)
+                        {
+                            Button exitButton = GameObject.Find("ExitBtn").GetComponent<Button>();
+                            exitButton.Press();
+                        }
+                    }
+                }
+                else
+                {
+                    keyChanged = false;
+                }
+            }
+            #endregion
+
+            #region singleKeyPress
+            GameObject canvasSingleSearch = null;
+            if (Keyboard.current[singlePlayerStartKey.Value].wasPressedThisFrame)
+            {
+                if (!keyChanged)
+                {
+                    GameObject canvas = GameObject.Find("DiscordButton").transform.parent.gameObject;
+                    if (canvas != null)
+                    {
+                        for (int i = 0; i < canvas.transform.childCount; i++)
+                        {
+                            canvasSingleSearch = canvas.transform.GetChild(i).gameObject;
+                            if (canvasSingleSearch.name == "SingleplayerTab")
+                            {
+                                canvasSingleSearch.SetActive(true);
+                                break;
+                            }
+                        }
+                        if (canvasSingleSearch != null)
+                        {
+                            Transform optionsContent = canvasSingleSearch.transform.FindChild("optionsContent");
+                            GameObject difficultyToPress = optionsContent.FindChild("Option (3)").GetChild(difficultyStart.Value).gameObject;
+                            Button difficultyButton = difficultyToPress.GetComponent<Button>();
+                            difficultyButton.Press();
+                            if (levelStarting.Value != 1)
+                            {
+                                int childIndex = levelStarting.Value == 0 ? 0 : (levelStarting.Value == 2 ? 4 : 0);
+                                GameObject levelToPress = optionsContent.FindChild("LevelSelect (1)").GetChild(childIndex).gameObject;
+                                Button levelButton = levelToPress.GetComponent<Button>();
+                                levelButton.Press();
+                            }
+                            GameObject startToPress = canvasSingleSearch.transform.FindChild("Footer").FindChild("StartBtn").gameObject;
+                            Button singleStartButton = startToPress.GetComponent<Button>();
+                            singleStartButton.Press();
+                        }
+                    }
+                }
+            }
+            #endregion
+
+            #region multiKeyPress
+            GameObject canvasMultiSearch = null;
+            if (Keyboard.current[multiPlayerStartKey.Value].wasPressedThisFrame)
+            {
+                if (!keyChanged)
+                {
+                    GameObject canvas = GameObject.Find("DiscordButton").transform.parent.gameObject;
+                    if (canvas != null)
+                    {
+                        for (int i = 0; i < canvas.transform.childCount; i++)
+                        {
+                            canvasMultiSearch = canvas.transform.GetChild(i).gameObject;
+                            if (canvasMultiSearch.name == "HostTab")
+                            {
+                                canvasMultiSearch.SetActive(true);
+                                break;
+                            }
+                        }
+                        if (canvasMultiSearch != null)
+                        {
+                            Transform optionsContent = canvasMultiSearch.transform.FindChild("optionsContent");
+                            GameObject playersToPress = optionsContent.FindChild("SlotOption_PLAYERS").FindChild("Content").GetChild(multiPeople.Value).gameObject;
+                            Button playersButton = playersToPress.GetComponent<Button>();
+                            playersButton.Press();
+                            GameObject difficultyToPress = optionsContent.FindChild("SlotOption_DIFFICULTY").FindChild("Content (2)").GetChild(difficultyStart.Value).gameObject;
+                            Button difficultyButton = difficultyToPress.GetComponent<Button>();
+                            difficultyButton.Press();
+                            int childIndex = levelStarting.Value == 0 ? 0 : (levelStarting.Value == 2 ? 4 : 0);
+                            GameObject levelToPress = optionsContent.FindChild("LevelSelect").GetChild(childIndex).gameObject;
+                            Button levelButton = levelToPress.GetComponent<Button>();
+                            levelButton.Press();
+                            GameObject nameToDo = optionsContent.FindChild("SlotOption_NAME").FindChild("Content (1)").FindChild("InputField").gameObject;
+                            InputField inputField = nameToDo.GetComponent<InputField>();
+                            String playerName = GameManager.GetPlayerName();
+                            inputField.m_Text = "Game of " + playerName;
+                            GameObject hostToPress = canvasMultiSearch.transform.FindChild("Footer").FindChild("HostBtn").gameObject;
+                            Button hostButton = hostToPress.GetComponent<Button>();
+                            hostButton.Press();
+                        }
+                    }
+                }
+            }
+            #endregion
         }
 
         public override void OnSceneWasInitialized(int buildIndex, string sceneName)
@@ -102,14 +435,14 @@ namespace SpeedrunnerMod
             if (sceneName == "MainMenu")
             {
                 MelonEvents.OnGUI.Subscribe(DrawRegisteredMods, 100);
-                MelonEvents.OnGUI.Subscribe(CreateDetectorButton, 100);
+                MelonEvents.OnGUI.Subscribe(CreateButtons, 100);
                 MelonEvents.OnGUI.Unsubscribe(vhsHandsRuleDetected);
             }
 
             if (sceneName == "MainLevel" || sceneName == "HOTEL_SCENE")
             {
                 MelonEvents.OnGUI.Unsubscribe(DrawRegisteredMods);
-                MelonEvents.OnGUI.Unsubscribe(CreateDetectorButton);
+                MelonEvents.OnGUI.Unsubscribe(CreateButtons);
                 if (detectorBool.Value)
                 {
                     DetectClockCassette();
