@@ -5,6 +5,7 @@ using static UnityEngine.Object;
 using Il2Cpp;
 using HarmonyLib;
 using System.Reflection;
+using UnityEngine.UI;
 
 namespace SpeedrunnerMod
 {
@@ -135,6 +136,22 @@ namespace SpeedrunnerMod
                 {
                     spawnPoint.transform.position = new Vector3(20, 0, -2);
                     MelonLogger.Msg(System.ConsoleColor.Cyan, spawnPoint.name + " moved to ladder!");
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(Button), "Press")]
+        class ExitButtonPatch
+        {
+            [HarmonyPrefix]
+            internal static void PressPrefix(Button __instance)
+            {
+                if (__instance.name == "ExitBtn")
+                {
+                    GameObject levels = GameObject.Find("----------LEVELS---------------");
+                    GameObject.Destroy(levels);
+                    GameObject hotel = GameObject.Find("--------SCENE------------");
+                    GameObject.Destroy(hotel);
                 }
             }
         }

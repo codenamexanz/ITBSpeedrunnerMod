@@ -1,5 +1,5 @@
 # ITBSpeedrunnerMod
-Speedrunner Mod for Inside the Backrooms. Moves lobby moth jelly and spawnpoints to ladder, also combined with the practice mod to detect normally bad VHS/Clock hands spawns.
+Speedrunner Mod for Inside the Backrooms. Moves lobby moth jelly and spawnpoints to ladder, also combined with the practice mod to detect normally bad VHS/Clock hands spawns, gets rid of exit game loud sound.
 
 ## Setup:
 
