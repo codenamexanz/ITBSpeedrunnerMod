@@ -1,13 +1,11 @@
 using System.IO;
 using MelonLoader;
 using UnityEngine;
-using static UnityEngine.Object;
 using Il2Cpp;
 using HarmonyLib;
-using System.Reflection;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
-using System.Xml;
+
 
 namespace SpeedrunnerMod
 {
@@ -17,6 +15,7 @@ namespace SpeedrunnerMod
     public class SpeedrunnerMod : MelonMod
     {
         private string listOfMods = "Active Mods \n";
+        private string version = null;
 
         #region changingKeyBools
         private static bool changingExitKey = false;
@@ -56,6 +55,7 @@ namespace SpeedrunnerMod
 
             MelonLogger.Msg(System.ConsoleColor.Green, "detectorBool value is " + detectorBool.Value);
         }
+
         private void DrawRegisteredMods()
         {
             GUIStyle style = new GUIStyle();
@@ -63,6 +63,20 @@ namespace SpeedrunnerMod
             style.normal.textColor = Color.white;
 
             GUI.Label(new Rect(Screen.width - 500 - 10, 100, 500, 100), listOfMods, style);
+        }
+
+        private void DrawVersion()
+        {
+            GUIStyle style = new GUIStyle();
+            style.alignment = TextAnchor.UpperRight;
+            style.normal.textColor = Color.white;
+
+            if (version == null)
+            {
+                version = GameObject.Find("VersionText").GetComponent<Text>().m_Text;
+            }
+
+            GUI.Label(new Rect(Screen.width - 500 - 10, 85, 500, 15), version, style);
         }
 
         private static void vhsHandsRuleDetected()
@@ -125,7 +139,7 @@ namespace SpeedrunnerMod
             }
             else
             {
-                exitButtonText = "Exit Key: " + exitKey.Value.ToString();
+                exitButtonText = "Reset Key: " + exitKey.Value.ToString();
             }
 
             String singleButtonText;
@@ -160,7 +174,7 @@ namespace SpeedrunnerMod
             }
             
 
-            if (GUI.Button(new Rect(Screen.width - 330f, 5f, 165f, 20f), "VHS/Hands Detector", detectorButton))
+            if (GUI.Button(new Rect(Screen.width - 380f, 5f, 165f, 20f), "VHS/Hands Detector", detectorButton))
             {
                 detectorBool.Value = !detectorBool.Value;
                 MelonLogger.Msg(System.ConsoleColor.Green, "Detector bool changed to " + detectorBool.Value);
@@ -168,7 +182,7 @@ namespace SpeedrunnerMod
             #endregion
 
             #region keyButtons
-            if (GUI.Button(new Rect(Screen.width - 330f, 30f, 165f, 20f), exitButtonText))
+            if (GUI.Button(new Rect(Screen.width - 380f, 30f, 165f, 20f), exitButtonText))
             {
                 if (!changingExitKey)
                 {
@@ -176,7 +190,7 @@ namespace SpeedrunnerMod
                 }
             }
 
-            if (GUI.Button(new Rect(Screen.width - 330f, 55f, 165f, 20f), singleButtonText))
+            if (GUI.Button(new Rect(Screen.width - 380f, 55f, 165f, 20f), singleButtonText))
             {
                 if (!changingSingleKey)
                 {
@@ -184,7 +198,7 @@ namespace SpeedrunnerMod
                 }
             }
 
-            if (GUI.Button(new Rect(Screen.width - 330f, 80f, 165f, 20f), multiButtonText))
+            if (GUI.Button(new Rect(Screen.width - 380f, 80f, 165f, 20f), multiButtonText))
             {
                 if (!changingMultiKey)
                 {
@@ -194,51 +208,51 @@ namespace SpeedrunnerMod
             #endregion
 
             #region levelStartButtons
-            if (GUI.Button(new Rect(Screen.width - 330f, 105f, 52f, 20f), "Lobby", levelStarting.Value == 0 ? whiteButtonStyle : normalButtonStyle))
+            if (GUI.Button(new Rect(Screen.width - 380f, 105f, 52f, 20f), "Lobby", levelStarting.Value == 0 ? whiteButtonStyle : normalButtonStyle))
             {
                 levelStarting.Value = 0;
             }
 
-            if (GUI.Button(new Rect(Screen.width - 273f, 105f, 52f, 20f), "None", levelStarting.Value == 1 ? whiteButtonStyle : normalButtonStyle))
+            if (GUI.Button(new Rect(Screen.width - 323f, 105f, 52f, 20f), "None", levelStarting.Value == 1 ? whiteButtonStyle : normalButtonStyle))
             {
                 levelStarting.Value = 1;
             }
 
-            if (GUI.Button(new Rect(Screen.width - 217f, 105f, 52f, 20f), "Hotel", levelStarting.Value == 2 ? whiteButtonStyle : normalButtonStyle))
+            if (GUI.Button(new Rect(Screen.width - 267f, 105f, 52f, 20f), "Hotel", levelStarting.Value == 2 ? whiteButtonStyle : normalButtonStyle))
             {
                 levelStarting.Value = 2;
             }
             #endregion
 
             #region difficultyStartButtons
-            if (GUI.Button(new Rect(Screen.width - 330f, 130f, 52f, 20f), "Easy", difficultyStart.Value == 0 ? whiteButtonStyle : normalButtonStyle))
+            if (GUI.Button(new Rect(Screen.width - 380f, 130f, 52f, 20f), "Easy", difficultyStart.Value == 0 ? whiteButtonStyle : normalButtonStyle))
             {
                 difficultyStart.Value = 0;
             }
 
-            if (GUI.Button(new Rect(Screen.width - 273f, 130f, 52f, 20f), "Norm", difficultyStart.Value == 1 ? whiteButtonStyle : normalButtonStyle))
+            if (GUI.Button(new Rect(Screen.width - 323f, 130f, 52f, 20f), "Norm", difficultyStart.Value == 1 ? whiteButtonStyle : normalButtonStyle))
             {
                 difficultyStart.Value = 1;
             }
 
-            if (GUI.Button(new Rect(Screen.width - 217f, 130f, 52f, 20f), "Hard", difficultyStart.Value == 2 ? whiteButtonStyle : normalButtonStyle))
+            if (GUI.Button(new Rect(Screen.width - 267f, 130f, 52f, 20f), "Hard", difficultyStart.Value == 2 ? whiteButtonStyle : normalButtonStyle))
             {
                 difficultyStart.Value = 2;
             }
             #endregion
 
             #region multiPlayerPeopleButtons
-            if (GUI.Button(new Rect(Screen.width - 330f, 155f, 52f, 20f), "2p", multiPeople.Value == 0 ? whiteButtonStyle : normalButtonStyle))
+            if (GUI.Button(new Rect(Screen.width - 380f, 155f, 52f, 20f), "2p", multiPeople.Value == 0 ? whiteButtonStyle : normalButtonStyle))
             {
                 multiPeople.Value = 0;
             }
 
-            if (GUI.Button(new Rect(Screen.width - 273f, 155f, 52f, 20f), "3p", multiPeople.Value == 1 ? whiteButtonStyle : normalButtonStyle))
+            if (GUI.Button(new Rect(Screen.width - 323f, 155f, 52f, 20f), "3p", multiPeople.Value == 1 ? whiteButtonStyle : normalButtonStyle))
             {
                 multiPeople.Value = 1;
             }
 
-            if (GUI.Button(new Rect(Screen.width - 217f, 155f, 52f, 20f), "4p", multiPeople.Value == 2 ? whiteButtonStyle : normalButtonStyle))
+            if (GUI.Button(new Rect(Screen.width - 267f, 155f, 52f, 20f), "4p", multiPeople.Value == 2 ? whiteButtonStyle : normalButtonStyle))
             {
                 multiPeople.Value = 2;
             }
@@ -437,12 +451,14 @@ namespace SpeedrunnerMod
                 MelonEvents.OnGUI.Subscribe(DrawRegisteredMods, 100);
                 MelonEvents.OnGUI.Subscribe(CreateButtons, 100);
                 MelonEvents.OnGUI.Unsubscribe(vhsHandsRuleDetected);
+                MelonEvents.OnGUI.Subscribe(DrawVersion, 100);
             }
 
             if (sceneName == "MainLevel" || sceneName == "HOTEL_SCENE")
             {
                 MelonEvents.OnGUI.Unsubscribe(DrawRegisteredMods);
                 MelonEvents.OnGUI.Unsubscribe(CreateButtons);
+                MelonEvents.OnGUI.Unsubscribe(DrawVersion);
                 if (detectorBool.Value)
                 {
                     DetectClockCassette();
@@ -462,13 +478,11 @@ namespace SpeedrunnerMod
                 foreach (GameObject mothJelly in mothJellys)
                 {
                     mothJelly.transform.position = new Vector3(19, 0, 0);
-                    MelonLogger.Msg(System.ConsoleColor.Cyan, mothJelly.name + " moved to ladder!");
                 }
 
                 foreach (GameObject spawnPoint in spawnPoints)
                 {
                     spawnPoint.transform.position = new Vector3(20, 0, -2);
-                    MelonLogger.Msg(System.ConsoleColor.Cyan, spawnPoint.name + " moved to ladder!");
                 }
             }
         }
@@ -479,7 +493,7 @@ namespace SpeedrunnerMod
             [HarmonyPrefix]
             internal static void PressPrefix(Button __instance)
             {
-                if (__instance.name == "ExitBtn")
+                if (__instance.name == "ExitBtn" && __instance.transform.parent.name == "Options")
                 {
                     GameObject levels = GameObject.Find("----------LEVELS---------------");
                     GameObject.Destroy(levels);
