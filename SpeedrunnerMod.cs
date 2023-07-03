@@ -15,7 +15,8 @@ namespace SpeedrunnerMod
     public class SpeedrunnerMod : MelonMod
     {
         private string listOfMods = "Active Mods \n";
-        private string version = null;
+        private string version = "";
+        private string scene = "";
 
         #region changingKeyBools
         private static bool changingExitKey = false;
@@ -329,70 +330,76 @@ namespace SpeedrunnerMod
 
             #region exitKeyPress
             GameObject canvasExitSearch = null;
-            if (Keyboard.current[exitKey.Value].wasPressedThisFrame)
+            if (scene != "MainMenu")
             {
-                if (!keyChanged)
+                if (Keyboard.current[exitKey.Value].wasPressedThisFrame)
                 {
-                    GameObject canvas = GameObject.Find("ChatUI").transform.parent.gameObject;
-                    if (canvas != null)
+                    if (!keyChanged)
                     {
-                        for (int i = 0; i < canvas.transform.childCount; i++)
+                        GameObject canvas = GameObject.Find("ChatUI").transform.parent.gameObject;
+                        if (canvas != null)
                         {
-                            canvasExitSearch = canvas.transform.GetChild(i).gameObject;
-                            if (canvasExitSearch.name == "PauseMenu")
+                            for (int i = 0; i < canvas.transform.childCount; i++)
                             {
-                                canvasExitSearch.SetActive(true);
-                                break;
+                                canvasExitSearch = canvas.transform.GetChild(i).gameObject;
+                                if (canvasExitSearch.name == "PauseMenu")
+                                {
+                                    canvasExitSearch.SetActive(true);
+                                    break;
+                                }
+                            }
+                            if (canvasExitSearch != null)
+                            {
+                                Button exitButton = GameObject.Find("ExitBtn").GetComponent<Button>();
+                                exitButton.Press();
                             }
                         }
-                        if (canvasExitSearch != null)
-                        {
-                            Button exitButton = GameObject.Find("ExitBtn").GetComponent<Button>();
-                            exitButton.Press();
-                        }
                     }
-                }
-                else
-                {
-                    keyChanged = false;
+                    else
+                    {
+                        keyChanged = false;
+                    }
                 }
             }
             #endregion
 
             #region singleKeyPress
             GameObject canvasSingleSearch = null;
-            if (Keyboard.current[singlePlayerStartKey.Value].wasPressedThisFrame)
+            if (scene == "MainMenu")
             {
-                if (!keyChanged)
+                if (Keyboard.current[singlePlayerStartKey.Value].wasPressedThisFrame)
                 {
-                    GameObject canvas = GameObject.Find("DiscordButton").transform.parent.gameObject;
-                    if (canvas != null)
+                    if (!keyChanged)
                     {
-                        for (int i = 0; i < canvas.transform.childCount; i++)
+                        GameObject canvas = GameObject.Find("DiscordButton").transform.parent.gameObject;
+                        if (canvas != null)
                         {
-                            canvasSingleSearch = canvas.transform.GetChild(i).gameObject;
-                            if (canvasSingleSearch.name == "SingleplayerTab")
+                            for (int i = 0; i < canvas.transform.childCount; i++)
                             {
-                                canvasSingleSearch.SetActive(true);
-                                break;
+                                canvasSingleSearch = canvas.transform.GetChild(i).gameObject;
+                                if (canvasSingleSearch.name == "SingleplayerTab")
+                                {
+                                    canvasSingleSearch.SetActive(true);
+                                    break;
+                                }
                             }
-                        }
-                        if (canvasSingleSearch != null)
-                        {
-                            Transform optionsContent = canvasSingleSearch.transform.FindChild("optionsContent");
-                            GameObject difficultyToPress = optionsContent.FindChild("Option (3)").GetChild(difficultyStart.Value).gameObject;
-                            Button difficultyButton = difficultyToPress.GetComponent<Button>();
-                            difficultyButton.Press();
-                            if (levelStarting.Value != 1)
+                            if (canvasSingleSearch != null)
                             {
-                                int childIndex = levelStarting.Value == 0 ? 0 : (levelStarting.Value == 2 ? 4 : 0);
-                                GameObject levelToPress = optionsContent.FindChild("LevelSelect (1)").GetChild(childIndex).gameObject;
-                                Button levelButton = levelToPress.GetComponent<Button>();
-                                levelButton.Press();
+                                Transform optionsContent = canvasSingleSearch.transform.FindChild("optionsContent");
+                                GameObject difficultyToPress = optionsContent.FindChild("Option (3)").GetChild(difficultyStart.Value).gameObject;
+                                Button difficultyButton = difficultyToPress.GetComponent<Button>();
+                                difficultyButton.Press();
+                                if (levelStarting.Value != 1)
+                                {
+                                    int childIndex = levelStarting.Value == 0 ? 0 : (levelStarting.Value == 2 ? 4 : 0);
+                                    GameObject levelToPress = optionsContent.FindChild("LevelSelect (1)").GetChild(childIndex).gameObject;
+                                    Button levelButton = levelToPress.GetComponent<Button>();
+                                    levelButton.Press();
+                                }
+                                GameObject startToPress = canvasSingleSearch.transform.FindChild("Footer").FindChild("StartBtn").gameObject;
+                                Button singleStartButton = startToPress.GetComponent<Button>();
+                                singleStartButton.Press();
                             }
-                            GameObject startToPress = canvasSingleSearch.transform.FindChild("Footer").FindChild("StartBtn").gameObject;
-                            Button singleStartButton = startToPress.GetComponent<Button>();
-                            singleStartButton.Press();
                         }
                     }
                 }
@@ -401,42 +408,45 @@ namespace SpeedrunnerMod
 
             #region multiKeyPress
             GameObject canvasMultiSearch = null;
-            if (Keyboard.current[multiPlayerStartKey.Value].wasPressedThisFrame)
+            if (scene == "MainMenu")
             {
-                if (!keyChanged)
+                if (Keyboard.current[multiPlayerStartKey.Value].wasPressedThisFrame)
                 {
-                    GameObject canvas = GameObject.Find("DiscordButton").transform.parent.gameObject;
-                    if (canvas != null)
+                    if (!keyChanged)
                     {
-                        for (int i = 0; i < canvas.transform.childCount; i++)
+                        GameObject canvas = GameObject.Find("DiscordButton").transform.parent.gameObject;
+                        if (canvas != null)
                         {
-                            canvasMultiSearch = canvas.transform.GetChild(i).gameObject;
-                            if (canvasMultiSearch.name == "HostTab")
+                            for (int i = 0; i < canvas.transform.childCount; i++)
                             {
-                                canvasMultiSearch.SetActive(true);
-                                break;
+                                canvasMultiSearch = canvas.transform.GetChild(i).gameObject;
+                                if (canvasMultiSearch.name == "HostTab")
+                                {
+                                    canvasMultiSearch.SetActive(true);
+                                    break;
+                                }
                             }
-                        }
-                        if (canvasMultiSearch != null)
-                        {
-                            Transform optionsContent = canvasMultiSearch.transform.FindChild("optionsContent");
-                            GameObject playersToPress = optionsContent.FindChild("SlotOption_PLAYERS").FindChild("Content").GetChild(multiPeople.Value).gameObject;
-                            Button playersButton = playersToPress.GetComponent<Button>();
-                            playersButton.Press();
-                            GameObject difficultyToPress = optionsContent.FindChild("SlotOption_DIFFICULTY").FindChild("Content (2)").GetChild(difficultyStart.Value).gameObject;
-                            Button difficultyButton = difficultyToPress.GetComponent<Button>();
-                            difficultyButton.Press();
-                            int childIndex = levelStarting.Value == 0 ? 0 : (levelStarting.Value == 2 ? 4 : 0);
-                            GameObject levelToPress = optionsContent.FindChild("LevelSelect").GetChild(childIndex).gameObject;
-                            Button levelButton = levelToPress.GetComponent<Button>();
-                            levelButton.Press();
-                            GameObject nameToDo = optionsContent.FindChild("SlotOption_NAME").FindChild("Content (1)").FindChild("InputField").gameObject;
-                            InputField inputField = nameToDo.GetComponent<InputField>();
-                            String playerName = GameManager.GetPlayerName();
-                            inputField.m_Text = "Game of " + playerName;
-                            GameObject hostToPress = canvasMultiSearch.transform.FindChild("Footer").FindChild("HostBtn").gameObject;
-                            Button hostButton = hostToPress.GetComponent<Button>();
-                            hostButton.Press();
+                            if (canvasMultiSearch != null)
+                            {
+                                Transform optionsContent = canvasMultiSearch.transform.FindChild("optionsContent");
+                                GameObject playersToPress = optionsContent.FindChild("SlotOption_PLAYERS").FindChild("Content").GetChild(multiPeople.Value).gameObject;
+                                Button playersButton = playersToPress.GetComponent<Button>();
+                                playersButton.Press();
+                                GameObject difficultyToPress = optionsContent.FindChild("SlotOption_DIFFICULTY").FindChild("Content (2)").GetChild(difficultyStart.Value).gameObject;
+                                Button difficultyButton = difficultyToPress.GetComponent<Button>();
+                                difficultyButton.Press();
+                                int childIndex = levelStarting.Value == 0 ? 0 : (levelStarting.Value == 2 ? 4 : 0);
+                                GameObject levelToPress = optionsContent.FindChild("LevelSelect").GetChild(childIndex).gameObject;
+                                Button levelButton = levelToPress.GetComponent<Button>();
+                                levelButton.Press();
+                                GameObject nameToDo = optionsContent.FindChild("SlotOption_NAME").FindChild("Content (1)").FindChild("InputField").gameObject;
+                                InputField inputField = nameToDo.GetComponent<InputField>();
+                                String playerName = GameManager.GetPlayerName();
+                                inputField.m_Text = "Game of " + playerName;
+                                GameObject hostToPress = canvasMultiSearch.transform.FindChild("Footer").FindChild("HostBtn").gameObject;
+                                Button hostButton = hostToPress.GetComponent<Button>();
+                                hostButton.Press();
+                            }
                         }
                     }
                 }
@@ -485,6 +495,7 @@ namespace SpeedrunnerMod
                     spawnPoint.transform.position = new Vector3(20, 0, -2);
                 }
             }
+            scene = sceneName;
         }
 
         [HarmonyPatch(typeof(Button), "Press")]
