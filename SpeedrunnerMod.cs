@@ -72,7 +72,7 @@ namespace SpeedrunnerMod
             style.alignment = TextAnchor.UpperRight;
             style.normal.textColor = Color.white;
 
-            if (version == null)
+            if (version == "")
             {
                 version = GameObject.Find("VersionText").GetComponent<Text>().m_Text;
             }
@@ -453,6 +453,7 @@ namespace SpeedrunnerMod
             }
             #endregion
         }
+        
 
         public override void OnSceneWasInitialized(int buildIndex, string sceneName)
         {
@@ -514,4 +515,4 @@ namespace SpeedrunnerMod
             }
         }
     }
-}
+} 
