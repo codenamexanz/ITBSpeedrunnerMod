@@ -17,11 +17,14 @@ namespace SpeedrunnerMod
         private string listOfMods = "Active Mods \n";
         private string version = "";
         private string scene = "";
+        private static bool tryJoin = false;
+        private static GameObject multiStart = null;
 
         #region changingKeyBools
         private static bool changingExitKey = false;
         private static bool changingSingleKey = false;
         private static bool changingMultiKey = false;
+        private static bool changingMultiJoinKey = false;
         private static bool keyChanged = false;
         #endregion
 
@@ -34,6 +37,8 @@ namespace SpeedrunnerMod
         private MelonPreferences_Entry<int> levelStarting;
         private MelonPreferences_Entry<int> difficultyStart;
         private MelonPreferences_Entry<int> multiPeople;
+        private MelonPreferences_Entry<Key> multiJoinKey;
+        private MelonPreferences_Entry<string> joinName;
         #endregion
 
         public override void OnInitializeMelon()
@@ -52,6 +57,8 @@ namespace SpeedrunnerMod
             levelStarting = category.CreateEntry<int>("startingLevel", 0);
             difficultyStart = category.CreateEntry<int>("difficultyStart", 0);
             multiPeople = category.CreateEntry<int>("multiplayerPlayers", 0);
+            multiJoinKey = category.CreateEntry<Key>("multiJoinKey", Key.End);
+            joinName = category.CreateEntry<string>("multiJoinName", "noobnoob423");
             #endregion
 
             MelonLogger.Msg(System.ConsoleColor.Green, "detectorBool value is " + detectorBool.Value);
@@ -150,7 +157,7 @@ namespace SpeedrunnerMod
             }
             else
             {
-                singleButtonText = "Singleplayer Key: " + singlePlayerStartKey.Value.ToString();
+                singleButtonText = "Single Start Key: " + singlePlayerStartKey.Value.ToString();
             }
 
             String multiButtonText;
@@ -160,7 +167,17 @@ namespace SpeedrunnerMod
             }
             else
             {
-                multiButtonText = "Multiplayer Key: " + multiPlayerStartKey.Value.ToString();
+                multiButtonText = "Multi Start Key: " + multiPlayerStartKey.Value.ToString();
+            }
+
+            String multiJoinButtonText;
+            if (changingMultiJoinKey)
+            {
+                multiJoinButtonText = "Press new Key:";
+            }
+            else
+            {
+                multiJoinButtonText = "Multi Join Key: " + multiJoinKey.Value.ToString();
             }
             #endregion
 
@@ -175,7 +192,7 @@ namespace SpeedrunnerMod
             }
             
 
-            if (GUI.Button(new Rect(Screen.width - 380f, 5f, 165f, 20f), "VHS/Hands Detector", detectorButton))
+            if (GUI.Button(new Rect(Screen.width - 450f, 5f, 165f, 20f), "VHS/Hands Detector", detectorButton))
             {
                 detectorBool.Value = !detectorBool.Value;
                 MelonLogger.Msg(System.ConsoleColor.Green, "Detector bool changed to " + detectorBool.Value);
@@ -183,7 +200,7 @@ namespace SpeedrunnerMod
             #endregion
 
             #region keyButtons
-            if (GUI.Button(new Rect(Screen.width - 380f, 30f, 165f, 20f), exitButtonText))
+            if (GUI.Button(new Rect(Screen.width - 450f, 30f, 165f, 20f), exitButtonText))
             {
                 if (!changingExitKey)
                 {
@@ -191,7 +208,7 @@ namespace SpeedrunnerMod
                 }
             }
 
-            if (GUI.Button(new Rect(Screen.width - 380f, 55f, 165f, 20f), singleButtonText))
+            if (GUI.Button(new Rect(Screen.width - 450f, 55f, 165f, 20f), singleButtonText))
             {
                 if (!changingSingleKey)
                 {
@@ -199,65 +216,84 @@ namespace SpeedrunnerMod
                 }
             }
 
-            if (GUI.Button(new Rect(Screen.width - 380f, 80f, 165f, 20f), multiButtonText))
+            if (GUI.Button(new Rect(Screen.width - 450f, 80f, 165f, 20f), multiButtonText))
             {
                 if (!changingMultiKey)
                 {
                     changingMultiKey = true;
                 }
             }
+
+            if (GUI.Button(new Rect(Screen.width - 450f, 180f, 165f, 20f), multiJoinButtonText))
+            {
+                if (!changingMultiJoinKey)
+                {
+                    changingMultiJoinKey = true;
+                }
+            }
             #endregion
 
             #region levelStartButtons
-            if (GUI.Button(new Rect(Screen.width - 380f, 105f, 52f, 20f), "Lobby", levelStarting.Value == 0 ? whiteButtonStyle : normalButtonStyle))
+            if (GUI.Button(new Rect(Screen.width - 450f, 105f, 52f, 20f), "Lobby", levelStarting.Value == 0 ? whiteButtonStyle : normalButtonStyle))
             {
                 levelStarting.Value = 0;
             }
 
-            if (GUI.Button(new Rect(Screen.width - 323f, 105f, 52f, 20f), "None", levelStarting.Value == 1 ? whiteButtonStyle : normalButtonStyle))
+            if (GUI.Button(new Rect(Screen.width - 393f, 105f, 52f, 20f), "None", levelStarting.Value == 1 ? whiteButtonStyle : normalButtonStyle))
             {
                 levelStarting.Value = 1;
             }
 
-            if (GUI.Button(new Rect(Screen.width - 267f, 105f, 52f, 20f), "Hotel", levelStarting.Value == 2 ? whiteButtonStyle : normalButtonStyle))
+            if (GUI.Button(new Rect(Screen.width - 337f, 105f, 52f, 20f), "Hotel", levelStarting.Value == 2 ? whiteButtonStyle : normalButtonStyle))
             {
                 levelStarting.Value = 2;
             }
             #endregion
 
             #region difficultyStartButtons
-            if (GUI.Button(new Rect(Screen.width - 380f, 130f, 52f, 20f), "Easy", difficultyStart.Value == 0 ? whiteButtonStyle : normalButtonStyle))
+            if (GUI.Button(new Rect(Screen.width - 450f, 130f, 52f, 20f), "Easy", difficultyStart.Value == 0 ? whiteButtonStyle : normalButtonStyle))
             {
                 difficultyStart.Value = 0;
             }
 
-            if (GUI.Button(new Rect(Screen.width - 323f, 130f, 52f, 20f), "Norm", difficultyStart.Value == 1 ? whiteButtonStyle : normalButtonStyle))
+            if (GUI.Button(new Rect(Screen.width - 393f, 130f, 52f, 20f), "Norm", difficultyStart.Value == 1 ? whiteButtonStyle : normalButtonStyle))
             {
                 difficultyStart.Value = 1;
             }
 
-            if (GUI.Button(new Rect(Screen.width - 267f, 130f, 52f, 20f), "Hard", difficultyStart.Value == 2 ? whiteButtonStyle : normalButtonStyle))
+            if (GUI.Button(new Rect(Screen.width - 337f, 130f, 52f, 20f), "Hard", difficultyStart.Value == 2 ? whiteButtonStyle : normalButtonStyle))
             {
                 difficultyStart.Value = 2;
             }
             #endregion
 
             #region multiPlayerPeopleButtons
-            if (GUI.Button(new Rect(Screen.width - 380f, 155f, 52f, 20f), "2p", multiPeople.Value == 0 ? whiteButtonStyle : normalButtonStyle))
+            if (GUI.Button(new Rect(Screen.width - 450f, 155f, 52f, 20f), "2p", multiPeople.Value == 0 ? whiteButtonStyle : normalButtonStyle))
             {
                 multiPeople.Value = 0;
             }
 
-            if (GUI.Button(new Rect(Screen.width - 323f, 155f, 52f, 20f), "3p", multiPeople.Value == 1 ? whiteButtonStyle : normalButtonStyle))
+            if (GUI.Button(new Rect(Screen.width - 393f, 155f, 52f, 20f), "3p", multiPeople.Value == 1 ? whiteButtonStyle : normalButtonStyle))
             {
                 multiPeople.Value = 1;
             }
 
-            if (GUI.Button(new Rect(Screen.width - 267f, 155f, 52f, 20f), "4p", multiPeople.Value == 2 ? whiteButtonStyle : normalButtonStyle))
+            if (GUI.Button(new Rect(Screen.width - 337f, 155f, 52f, 20f), "4p", multiPeople.Value == 2 ? whiteButtonStyle : normalButtonStyle))
             {
                 multiPeople.Value = 2;
             }
             #endregion
+
+            #region multiJoinName
+            joinName.Value = GUI.TextField(new Rect(Screen.width - 450f, 205f, 165f, 20f), joinName.Value);
+            #endregion
+        }
+
+        public static async Task RefreshServerList(ServerListUI serverList)
+        {
+            serverList.RefreshServerList();
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            tryJoin = true;
         }
 
         public override void OnUpdate()
@@ -319,6 +355,28 @@ namespace SpeedrunnerMod
                             {
                                 changingMultiKey = false;
                                 multiPlayerStartKey.Value = key;
+                                keyChanged = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            #endregion
+
+            #region multiJoinKeyChange
+            if (changingMultiJoinKey)
+            {
+                if (Keyboard.current.anyKey.wasPressedThisFrame)
+                {
+                    foreach (Key key in Enum.GetValues(typeof(Key)))
+                    {
+                        if (key.ToString() != "None" && key.ToString() != multiJoinKey.Value.ToString())
+                        {
+                            if (Keyboard.current[key].wasPressedThisFrame)
+                            {
+                                changingMultiJoinKey = false;
+                                multiJoinKey.Value = key;
                                 keyChanged = true;
                                 break;
                             }
@@ -460,8 +518,60 @@ namespace SpeedrunnerMod
                 }
             }
             #endregion
+
+            #region multiJoinKeyPress
+            GameObject canvasMultiStartSearch = null;
+            if (scene == "MainMenu")
+            {
+                if (Keyboard.current[multiJoinKey.Value].wasPressedThisFrame) // This line needs multi shit
+                {
+                    if (!keyChanged)
+                    {
+                        GameObject canvas = GameObject.Find("DiscordButton").transform.parent.gameObject;
+                        if (canvas != null)
+                        {
+                            for (int i = 0; i < canvas.transform.childCount; i++)
+                            {
+                                canvasMultiStartSearch = canvas.transform.GetChild(i).gameObject;
+                                multiStart = canvasMultiStartSearch;
+                                if (canvasMultiStartSearch.name == "GameMatchmakingUI")
+                                {
+                                    canvasMultiStartSearch.SetActive(true);
+                                    break;
+                                }
+                            }
+                            if (canvasMultiStartSearch != null)
+                            {
+                                ServerListUI serverList = canvasMultiStartSearch.GetComponent<ServerListUI>();
+                                if (serverList != null)
+                                {
+                                    RefreshServerList(serverList); 
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        keyChanged = false;
+                    }
+                }
+            }
+            if (tryJoin)
+            {
+                ServerListUI serverList = multiStart.GetComponent<ServerListUI>();
+                foreach (ServerSlotUI lobby in serverList.m_CurrentGameSlots)
+                {
+                    Text lobbyName = lobby.nameText;
+                    if (lobbyName.m_Text == "Game of " + joinName.Value)
+                    {
+                        lobby.joinBtn.Press();
+                    }
+                }
+                tryJoin = false;
+            }
+            #endregion
         }
-        
+
         public override void OnSceneWasInitialized(int buildIndex, string sceneName)
         {
             if (sceneName == "MainMenu")

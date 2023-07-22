@@ -28,6 +28,7 @@ Speedrunner Mod for Inside the Backrooms.
   - Near the list of mods, there is a toggle for activating the VHS/Hands detector, white = ON!
   - Below that are the buttons that let you change reset/start keys.
   - The options for starting the game in a certain way are below that, there are starting area, difficulty, and player (multiplayer) parameters.
+  - There is also a key for joining multiplayer lobbys, along with a name text field, the key will auto join "Game of <textfield>"
 
 ## Questions/Issues
 If you have any questions or issues feel free to contact Xanz on discord
