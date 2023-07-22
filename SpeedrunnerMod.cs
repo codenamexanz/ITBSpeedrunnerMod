@@ -402,6 +402,10 @@ namespace SpeedrunnerMod
                             }
                         }
                     }
+                    else
+                    {
+                        keyChanged = false;
+                    }
                 }
             }
             #endregion
@@ -449,12 +453,15 @@ namespace SpeedrunnerMod
                             }
                         }
                     }
+                    else
+                    {
+                        keyChanged = false;
+                    }
                 }
             }
             #endregion
         }
         
-
         public override void OnSceneWasInitialized(int buildIndex, string sceneName)
         {
             if (sceneName == "MainMenu")
