@@ -17,6 +17,7 @@ Speedrunner Mod for Inside the Backrooms.
 
 ### ITBSpeedrunnerMod Install Steps
   - Download the mod https://github.com/codenamexanz/ITBSpeedrunnerMod/raw/main/SpeedrunnerMod.dll
+  - No buttons version here https://github.com/codenamexanz/ITBSpeedrunnerMod/raw/main/SpeedrunnerModNoBtns.dll
   - Add the dll into the Mods folder generated within the Inside the Backrooms folder
 
 
