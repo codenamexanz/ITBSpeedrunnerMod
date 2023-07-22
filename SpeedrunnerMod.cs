@@ -61,7 +61,6 @@ namespace SpeedrunnerMod
             joinName = category.CreateEntry<string>("multiJoinName", "noobnoob423");
             #endregion
 
-            MelonLogger.Msg(System.ConsoleColor.Green, "detectorBool value is " + detectorBool.Value);
         }
 
         private void DrawRegisteredMods()
@@ -195,7 +194,6 @@ namespace SpeedrunnerMod
             if (GUI.Button(new Rect(Screen.width - 450f, 5f, 165f, 20f), "VHS/Hands Detector", detectorButton))
             {
                 detectorBool.Value = !detectorBool.Value;
-                MelonLogger.Msg(System.ConsoleColor.Green, "Detector bool changed to " + detectorBool.Value);
             }
             #endregion
 
@@ -523,7 +521,7 @@ namespace SpeedrunnerMod
             GameObject canvasMultiStartSearch = null;
             if (scene == "MainMenu")
             {
-                if (Keyboard.current[multiJoinKey.Value].wasPressedThisFrame) // This line needs multi shit
+                if (Keyboard.current[multiJoinKey.Value].wasPressedThisFrame)
                 {
                     if (!keyChanged)
                     {
@@ -565,9 +563,10 @@ namespace SpeedrunnerMod
                     if (lobbyName.m_Text == "Game of " + joinName.Value)
                     {
                         lobby.joinBtn.Press();
+                        tryJoin = false;
+                        break;
                     }
                 }
-                tryJoin = false;
             }
             #endregion
         }
