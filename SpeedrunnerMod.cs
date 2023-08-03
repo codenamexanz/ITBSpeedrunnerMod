@@ -1,11 +1,9 @@
-using System.IO;
 using MelonLoader;
 using UnityEngine;
 using Il2Cpp;
 using HarmonyLib;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
-
 
 namespace SpeedrunnerMod
 {
@@ -556,19 +554,29 @@ namespace SpeedrunnerMod
             }
             if (tryJoin)
             {
-                ServerListUI serverList = multiStart.GetComponent<ServerListUI>();
-                foreach (ServerSlotUI lobby in serverList.m_CurrentGameSlots)
+                try
                 {
-                    Text lobbyName = lobby.nameText;
-                    if (lobbyName.m_Text == "Game of " + joinName.Value)
+                    ServerListUI serverList = multiStart.GetComponent<ServerListUI>();
+                    foreach (ServerSlotUI lobby in serverList.m_CurrentGameSlots)
                     {
-                        lobby.joinBtn.Press();
-                        tryJoin = false;
-                        break;
+                        Text lobbyName = lobby.nameText;
+                        if (lobbyName.m_Text == "Game of " + joinName.Value)
+                        {
+                            lobby.joinBtn.Press();
+                            tryJoin = false;
+                            break;
+                        }
                     }
                 }
+                catch (Exception e) 
+                {
+                    tryJoin = false;
+                    MelonLogger.Msg(System.ConsoleColor.Red, "Multiplayer list destroyed, tryJoin = false");
+                }
+                
             }
             #endregion
+
         }
 
         public override void OnSceneWasInitialized(int buildIndex, string sceneName)
@@ -623,10 +631,11 @@ namespace SpeedrunnerMod
             {
                 if (__instance.name == "ExitBtn" && __instance.transform.parent.name == "Options")
                 {
-                    GameObject levels = GameObject.Find("----------LEVELS---------------");
-                    GameObject.Destroy(levels);
-                    GameObject hotel = GameObject.Find("--------SCENE------------");
-                    GameObject.Destroy(hotel);
+                    AudioSource[] audioSources = GameObject.FindObjectsOfType<AudioSource>();
+                    foreach (AudioSource audio in audioSources)
+                    {
+                        audio.volume = 0;
+                    }
                 }
             }
         }
