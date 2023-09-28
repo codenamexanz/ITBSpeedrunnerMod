@@ -235,15 +235,16 @@ namespace SpeedrunnerMod
                 levelStarting.Value = 0;
             }
 
-            if (GUI.Button(new Rect(Screen.width - 393f, 105f, 52f, 20f), "None", levelStarting.Value == 1 ? whiteButtonStyle : normalButtonStyle))
+            if (GUI.Button(new Rect(Screen.width - 393f, 105f, 52f, 20f), "Hotel", levelStarting.Value == 1 ? whiteButtonStyle : normalButtonStyle))
             {
                 levelStarting.Value = 1;
             }
 
-            if (GUI.Button(new Rect(Screen.width - 337f, 105f, 52f, 20f), "Hotel", levelStarting.Value == 2 ? whiteButtonStyle : normalButtonStyle))
+            if (GUI.Button(new Rect(Screen.width - 337f, 105f, 52f, 20f), "Grass", levelStarting.Value == 2 ? whiteButtonStyle : normalButtonStyle))
             {
                 levelStarting.Value = 2;
             }
+
             #endregion
 
             #region difficultyStartButtons
@@ -264,19 +265,24 @@ namespace SpeedrunnerMod
             #endregion
 
             #region multiPlayerPeopleButtons
-            if (GUI.Button(new Rect(Screen.width - 450f, 155f, 52f, 20f), "2p", multiPeople.Value == 0 ? whiteButtonStyle : normalButtonStyle))
+            if (GUI.Button(new Rect(Screen.width - 450f, 155f, 37.5f, 20f), "2p", multiPeople.Value == 0 ? whiteButtonStyle : normalButtonStyle))
             {
                 multiPeople.Value = 0;
             }
 
-            if (GUI.Button(new Rect(Screen.width - 393f, 155f, 52f, 20f), "3p", multiPeople.Value == 1 ? whiteButtonStyle : normalButtonStyle))
+            if (GUI.Button(new Rect(Screen.width - 407.5f, 155f, 37.5f, 20f), "3p", multiPeople.Value == 1 ? whiteButtonStyle : normalButtonStyle))
             {
                 multiPeople.Value = 1;
             }
 
-            if (GUI.Button(new Rect(Screen.width - 337f, 155f, 52f, 20f), "4p", multiPeople.Value == 2 ? whiteButtonStyle : normalButtonStyle))
+            if (GUI.Button(new Rect(Screen.width - 365f, 155f, 37.5f, 20f), "4p", multiPeople.Value == 2 ? whiteButtonStyle : normalButtonStyle))
             {
                 multiPeople.Value = 2;
+            }
+
+            if (GUI.Button(new Rect(Screen.width - 322.5f, 155f, 37.5f, 20f), "5p", multiPeople.Value == 3 ? whiteButtonStyle : normalButtonStyle))
+            {
+                multiPeople.Value = 3;
             }
             #endregion
 
@@ -291,7 +297,7 @@ namespace SpeedrunnerMod
             await Task.Delay(TimeSpan.FromSeconds(1));
             tryJoin = true;
         }
-
+        
         public override void OnUpdate()
         {
             #region exitKeyChange
@@ -439,17 +445,14 @@ namespace SpeedrunnerMod
                             }
                             if (canvasSingleSearch != null)
                             {
-                                Transform optionsContent = canvasSingleSearch.transform.FindChild("optionsContent");
+                                Transform optionsContent = canvasSingleSearch.transform.FindChild("MainOptionsContent");
                                 GameObject difficultyToPress = optionsContent.FindChild("Option (3)").GetChild(difficultyStart.Value).gameObject;
                                 Button difficultyButton = difficultyToPress.GetComponent<Button>();
                                 difficultyButton.Press();
-                                if (levelStarting.Value != 1)
-                                {
-                                    int childIndex = levelStarting.Value == 0 ? 0 : (levelStarting.Value == 2 ? 4 : 0);
-                                    GameObject levelToPress = optionsContent.FindChild("LevelSelect (1)").GetChild(childIndex).gameObject;
-                                    Button levelButton = levelToPress.GetComponent<Button>();
-                                    levelButton.Press();
-                                }
+                                int childIndex = levelStarting.Value == 0 ? 0 : (levelStarting.Value == 1 ? 5 : (levelStarting.Value == 2 ? 6 : 0));
+                                GameObject levelToPress = optionsContent.FindChild("Scroll View").FindChild("Viewport").FindChild("Content").GetChild(childIndex).gameObject;
+                                Button levelButton = levelToPress.GetComponent<Button>();
+                                levelButton.Press();
                                 GameObject startToPress = canvasSingleSearch.transform.FindChild("Footer").FindChild("StartBtn").gameObject;
                                 Button singleStartButton = startToPress.GetComponent<Button>();
                                 singleStartButton.Press();
@@ -486,21 +489,27 @@ namespace SpeedrunnerMod
                             }
                             if (canvasMultiSearch != null)
                             {
-                                Transform optionsContent = canvasMultiSearch.transform.FindChild("optionsContent");
+                                Transform optionsContent = canvasMultiSearch.transform.FindChild("MainGameSettings").FindChild("optionsContent");
+
                                 GameObject playersToPress = optionsContent.FindChild("SlotOption_PLAYERS").FindChild("Content").GetChild(multiPeople.Value).gameObject;
                                 Button playersButton = playersToPress.GetComponent<Button>();
                                 playersButton.Press();
+
                                 GameObject difficultyToPress = optionsContent.FindChild("SlotOption_DIFFICULTY").FindChild("Content (2)").GetChild(difficultyStart.Value).gameObject;
                                 Button difficultyButton = difficultyToPress.GetComponent<Button>();
                                 difficultyButton.Press();
-                                int childIndex = levelStarting.Value == 0 ? 0 : (levelStarting.Value == 2 ? 4 : 0);
-                                GameObject levelToPress = optionsContent.FindChild("LevelSelect").GetChild(childIndex).gameObject;
-                                Button levelButton = levelToPress.GetComponent<Button>();
-                                levelButton.Press();
+
                                 GameObject nameToDo = optionsContent.FindChild("SlotOption_NAME").FindChild("Content (1)").FindChild("InputField").gameObject;
                                 InputField inputField = nameToDo.GetComponent<InputField>();
                                 String playerName = GameManager.GetPlayerName();
                                 inputField.m_Text = "Game of " + playerName;
+                                
+
+                                int childIndex = levelStarting.Value == 0 ? 0 : (levelStarting.Value == 1 ? 5 :  (levelStarting.Value == 2 ? 6 : 0));
+                                GameObject levelToPress = canvasMultiSearch.transform.FindChild("MainGameSettings").FindChild("optionsContent (1)").FindChild("Scroll View").FindChild("Viewport").FindChild("Content").GetChild(childIndex).gameObject;
+                                Button levelButton = levelToPress.GetComponent<Button>();
+                                levelButton.Press();
+
                                 GameObject hostToPress = canvasMultiSearch.transform.FindChild("Footer").FindChild("HostBtn").gameObject;
                                 Button hostButton = hostToPress.GetComponent<Button>();
                                 hostButton.Press();
@@ -581,24 +590,20 @@ namespace SpeedrunnerMod
 
         public override void OnSceneWasInitialized(int buildIndex, string sceneName)
         {
+            if (sceneName != "MainMenu")
+            {
+                MelonEvents.OnGUI.Unsubscribe(DrawRegisteredMods);
+                MelonEvents.OnGUI.Unsubscribe(CreateButtons);
+                MelonEvents.OnGUI.Unsubscribe(DrawVersion);
+                
+            }
+
             if (sceneName == "MainMenu")
             {
                 MelonEvents.OnGUI.Subscribe(DrawRegisteredMods, 100);
                 MelonEvents.OnGUI.Subscribe(CreateButtons, 100);
                 MelonEvents.OnGUI.Unsubscribe(vhsHandsRuleDetected);
                 MelonEvents.OnGUI.Subscribe(DrawVersion, 100);
-            }
-
-            if (sceneName == "MainLevel" || sceneName == "HOTEL_SCENE")
-            {
-                MelonEvents.OnGUI.Unsubscribe(DrawRegisteredMods);
-                MelonEvents.OnGUI.Unsubscribe(CreateButtons);
-                MelonEvents.OnGUI.Unsubscribe(DrawVersion);
-                if (detectorBool.Value)
-                {
-                    DetectClockCassette();
-                    DetectPliersHands();
-                }
             }
 
             if (sceneName == "MainLevel")
@@ -619,7 +624,14 @@ namespace SpeedrunnerMod
                 {
                     spawnPoint.transform.position = new Vector3(20, 0, -2);
                 }
+               
+                if (detectorBool.Value)
+                {
+                    DetectClockCassette();
+                    DetectPliersHands();
+                }
             }
+
             scene = sceneName;
         }
 
