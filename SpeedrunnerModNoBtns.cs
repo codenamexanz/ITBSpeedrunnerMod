@@ -144,7 +144,7 @@ namespace SpeedrunnerMod
                 MelonEvents.OnGUI.Subscribe(DrawVersion, 100);
             }
 
-            if (sceneName == "MainLevel" || sceneName == "HOTEL_SCENE")
+            if (sceneName == "MainLevel" || sceneName == "HOTEL_SCENE" || sceneName == "GRASS_ROOMS_SCENE")
             {
                 MelonEvents.OnGUI.Unsubscribe(DrawRegisteredMods);
                 MelonEvents.OnGUI.Unsubscribe(CreateButtons);

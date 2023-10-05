@@ -4,6 +4,8 @@ using Il2Cpp;
 using HarmonyLib;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
+using MelonLoader.TinyJSON;
 
 namespace SpeedrunnerMod
 {
@@ -586,11 +588,12 @@ namespace SpeedrunnerMod
             }
             #endregion
 
+
         }
 
         public override void OnSceneWasInitialized(int buildIndex, string sceneName)
         {
-            if (sceneName != "MainMenu")
+            if (sceneName == "MainLevel" || sceneName == "GRASS_ROOMS_SCENE" || sceneName == "HOTEL_SCENE")
             {
                 MelonEvents.OnGUI.Unsubscribe(DrawRegisteredMods);
                 MelonEvents.OnGUI.Unsubscribe(CreateButtons);
